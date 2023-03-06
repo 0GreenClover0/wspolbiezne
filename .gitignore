@@ -4,7 +4,15 @@
 # User-specific files
 *.suo
 *.user
+*.rsuser
+*.userosscache
 *.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Mono auto generated files
+mono_crash.*
 
 # Build results
 [Dd]ebug/
@@ -12,10 +20,36 @@
 [Rr]elease/
 [Rr]eleases/
 x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 build/
 bld/
 [Bb]in/
 [Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 2017 auto generated files
+Generated\ Files/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
 
 # Roslyn cache directories
 *.ide/
@@ -57,6 +91,11 @@ dlldata.c
 *.pidb
 *.svclog
 *.scc
+*_h.h
+*.iobj
+*.ipdb
+*_wpftmp.csproj
+*.tlog
 
 # Chutzpah Test files
 _Chutzpah*
