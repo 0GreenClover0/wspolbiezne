@@ -6,7 +6,18 @@
         xmlns:local="clr-namespace:Wspolbiezne"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-		<TextBox>Hello world</TextBox>
-    </Grid>
+    <StackPanel>
+        <TextBlock Width="200">Masa ciała A w kilogramach:</TextBlock>
+        <TextBox Width="200" MaxLength="100" Name="MassA"/>
+        <TextBlock Width="200">Masa ciała B w kilogramach:</TextBlock>
+        <TextBox Width="200" MaxLength="100" Name="MassB"/>
+        <TextBlock Width="200">Odległość między ciałami w metrach:</TextBlock>
+        <TextBox Width="200" MaxLength="100" Name="Distance"/>
+        <TextBlock TextAlignment="Center" Width="450" Name="Result">Wartość siły grawitacji między ciałami = </TextBlock>
+        <Button Width="200"
+                Name="CalculateButton"
+                Click="CalculateButton_Click"
+                Content="Oblicz">
+        </Button>
+    </StackPanel>
 </Window>

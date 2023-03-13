@@ -24,5 +24,15 @@ namespace Wspolbiezne
         {
             InitializeComponent();
         }
+
+        private void CalculateButton_Click(object sender, RoutedEventArgs e)
+        {
+            Result.Text = "Wartość siły grawitacji między ciałami = " +
+                PhysicsMath.CalculateGravitationalForce(
+                    Convert.ToDouble(MassA.Text),
+                    Convert.ToDouble(MassB.Text),
+                    Convert.ToDouble(Distance.Text)
+                ).ToString("E4");
+        }
     }
 }
