@@ -8,8 +8,4 @@
     <StartupObject>Wspolbiezne.App</StartupObject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>

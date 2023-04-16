@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wspolbiezne"
+        xmlns:model="clr-namespace:Wspolbiezne.Presentation.Model"
         mc:Ignorable="d"
         Title="Wspolbiezne" Height="1080" Width="1920">
     <Grid Width="1920"  Height="1080">
+
         <Canvas Name="BallPlayground" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200"  Height="795" Background="Aquamarine">
             
-        </Canvas>
+        </Canvas>  
         <Canvas HorizontalAlignment="Right" Width="720" Height="1080" Background="IndianRed">
             <TextBlock Name="AAA"/>
             <StackPanel Width="340" Orientation="Vertical" HorizontalAlignment="Center">

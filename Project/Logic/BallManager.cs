@@ -9,14 +9,15 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Numerics;
 using Wspolbiezne.Presentation.Model;
+using Wspolbiezne.Data;
 
 namespace Wspolbiezne.Logic
 {
-    internal class BallManager
+    public class BallManager
     {
         private readonly Random random = new Random();
 
-        internal void CreateBall(Canvas canvas, Playground playground)
+        public void CreateBall(Canvas canvas, Playground playground)
         {
             int ballRadius = playground.ballRadius;
             Brush brush = new SolidColorBrush(Color.FromRgb(
@@ -44,14 +45,14 @@ namespace Wspolbiezne.Logic
             ball.Ellipse = ellipse;
             ball.BallRadius = playground.ballRadius;
             ball.CurrentPosition = new Vector2(x, y);
-            ball.Speed = 1f;
+            ball.Speed = 20f;
 
             playground.balls.Add(ball);
             playground.ellipses.Add(ellipse);
             canvas.Children.Add(ellipse);
         }
 
-        internal void RemoveBall(Canvas canvas, Playground playground)
+        public void RemoveBall(Canvas canvas, Playground playground)
         {
             if (playground.ellipses.Count == 0)
                 return;
@@ -62,25 +63,24 @@ namespace Wspolbiezne.Logic
             playground.ellipses.Remove(ball.Ellipse);
         }
 
-        internal void MoveBall(Canvas canvas, Ball ball, TextBlock block)
+        public void MoveBall(int width, int height, Ball ball, float deltaTime)
         {
             int ballRadius = ball.BallRadius;
             if (ball.NextPosition == null || Vector2.Distance(ball.CurrentPosition, ball.NextPosition.Value) < 5f)
             {
                 ball.NextPosition = new Vector2(
-                    random.Next(0, (int)canvas.ActualWidth - ballRadius),
-                    random.Next(0, (int)canvas.ActualHeight - ballRadius)
+                    random.Next(0, width - ballRadius),
+                    random.Next(0, height - ballRadius)
                 );
             }
 
-            Vector2 nextPosition = MoveTowards(ball.CurrentPosition, ball.NextPosition.Value, ball.Speed);
+            Vector2 nextPosition = MoveTowards(ball.CurrentPosition, ball.NextPosition.Value, ball.Speed * deltaTime);
             //Vector2 nextPosition = Vector2.Lerp(ball.CurrentPosition, ball.NextPosition.Value, ball.Speed);
-            Canvas.SetLeft(ball.Ellipse, nextPosition.X);
-            Canvas.SetTop(ball.Ellipse, nextPosition.Y);
+
             ball.CurrentPosition = nextPosition;
         }
 
-        internal void SetBalls(Canvas canvas, Playground playground, int count)
+        public void SetBalls(Canvas canvas, Playground playground, int count)
         {
             int currentBallCount = playground.balls.Count;
             if (currentBallCount > count)
@@ -110,6 +110,12 @@ namespace Wspolbiezne.Logic
                 return target;
             }
             return current + a / magnitude * maxDistanceDelta;
+        }
+
+        public void Render(Ball ball)
+        {
+            Canvas.SetLeft(ball.Ellipse, ball.CurrentPosition.X);
+            Canvas.SetTop(ball.Ellipse, ball.CurrentPosition.Y);
         }
     }
 }

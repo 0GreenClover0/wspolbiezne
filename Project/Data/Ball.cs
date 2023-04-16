@@ -6,12 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
 
-namespace Wspolbiezne.Logic
+namespace Wspolbiezne.Data
 {
-    internal class Ball
+    public class Ball
     {
         private Ellipse ellipse;
         public Ellipse Ellipse { get => ellipse; set => ellipse = value; }
+
+        public int x { get; set; }
+        public int y { get; set; }
 
         private Vector2 currentPosition;
         public Vector2 CurrentPosition { get => currentPosition; set => currentPosition = value; }
