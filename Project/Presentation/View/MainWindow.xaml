@@ -1,0 +1,61 @@
+﻿<Window x:Class="Wspolbiezne.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Wspolbiezne"
+        mc:Ignorable="d"
+        Title="Wspolbiezne" Height="1080" Width="1920">
+    <Grid Width="1920"  Height="1080">
+        <Canvas Name="BallPlayground" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200"  Height="795" Background="Aquamarine">
+            
+        </Canvas>
+        <Canvas HorizontalAlignment="Right" Width="720" Height="1080" Background="IndianRed">
+            <TextBlock Name="AAA"/>
+            <StackPanel Width="340" Orientation="Vertical" HorizontalAlignment="Center">
+                <Button
+                    Margin="0, 20, 0, 0"
+                    HorizontalAlignment="Center"
+                    Width="200"
+                    Name="AddSphereButton"
+                    Click="AddSphereButton_Click"
+                    Content="Dodaj kulę"
+                >
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button
+                    Margin="0, 20, 0, 0"
+                    HorizontalAlignment="Center"
+                    Width="200"
+                    Name="RemoveSphereButton"
+                    Click="RemoveSphereButton_Click"
+                    Content="Usuń kulę"
+                >
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <TextBlock Width="200" Margin="0, 20, 0, 0">
+                    Ilość kul:
+                </TextBlock>
+                <TextBox
+                    Width="200"
+                    Focusable="True"
+                    Name="BallCount"
+                    TextChanged="OnBallCountChanged"
+                    PreviewTextInput="OnBallCountInput"
+                    PreviewKeyDown="OnBallCountKeydown"
+                    >
+                    
+                </TextBox>
+            </StackPanel>
+        </Canvas>
+    </Grid>
+    
+</Window>
