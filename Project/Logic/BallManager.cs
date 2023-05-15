@@ -110,7 +110,12 @@ namespace Wspolbiezne.Logic
                 if (Playground.ModelBalls[i] == ball)
                     continue;
 
-                Vector2 normal = (Playground.ModelBalls[i].CurrentPosition - ball.CurrentPosition) / MathF.Sqrt(distanceSquared);
+                float distance = MathF.Sqrt(distanceSquared);
+
+                if (distance == 0f)
+                    continue;
+
+                Vector2 normal = (Playground.ModelBalls[i].CurrentPosition - ball.CurrentPosition) / distance;
                 
                 float p = (2f / (ball.Mass + Playground.ModelBalls[i].Mass)) * (ball.Velocity * normal - Playground.ModelBalls[i].Velocity * normal).Length();
 
