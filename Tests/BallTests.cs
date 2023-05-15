@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
+﻿using System.Numerics;
 using Wspolbiezne.Data;
 using Wspolbiezne.Logic;
 
@@ -17,16 +11,19 @@ namespace Tests
         public void BallCreationTest()
         {
             Ball ball = new Ball();
-            ball.Ellipse = null;
-            ball.BallRadius = 20;
+            ball.BallDiameter = 40f;
+            ball.BallRadius = 20f;
             ball.CurrentPosition = new Vector2(0, 0);
             ball.Speed = 20f;
+            ball.Mass = 2f;
+            ball.Velocity = new Vector2(2f, 2f);
 
             Assert.AreEqual(ball.Speed, 20f);
-            Assert.AreEqual(ball.BallRadius, 20);
+            Assert.AreEqual(ball.BallRadius, 20f);
+            Assert.AreEqual(ball.BallDiameter, 40f);
+            Assert.AreEqual(ball.Mass, 2f);
             Assert.AreEqual(ball.CurrentPosition, new Vector2(0, 0));
-            Assert.IsNull(ball.Ellipse);
-            Assert.IsNull(ball.NextPosition);
+            Assert.AreEqual(ball.Velocity, new Vector2(2f, 2f));
         }
 
         [TestMethod]
@@ -35,17 +32,19 @@ namespace Tests
             BallManager ballManager = new BallManager();
 
             Ball ball = new Ball();
-            ball.Ellipse = null;
-            ball.BallRadius = 20;
-            ball.CurrentPosition = new Vector2(0, 0);
+            ball.BallDiameter = 40f;
+            ball.BallRadius = 20f;
+            ball.CurrentPosition = new Vector2(100, 100);
+            ball.Velocity = new Vector2(1f, 1f);
             ball.Speed = 20f;
+            ball.Mass = 1f;
 
-            Assert.IsNull(ball.NextPosition);
+            var currentPos = ball.CurrentPosition;
+            Assert.IsNotNull(currentPos);
 
-            ballManager.MoveBall(1920, 180, ball, 0.05f);
+            ballManager.MoveBall(1920, 180, ball, 0.1f);
 
-            Assert.IsNotNull(ball.NextPosition);
-            Assert.AreNotEqual(ball.CurrentPosition, ball.NextPosition);
+            Assert.AreNotEqual(ball.CurrentPosition, currentPos);
         }
     }
 }

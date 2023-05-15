@@ -1,33 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
+using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
 namespace Wspolbiezne.Data
 {
-    public class Ball
+    public class Ball : INotifyPropertyChanged
     {
-        private Ellipse ellipse;
-        public Ellipse Ellipse { get => ellipse; set => ellipse = value; }
+        public Brush Brush { get; set; }
 
-        public int x { get; set; }
-        public int y { get; set; }
+        public float X
+        {
+            get { return CurrentPosition.X; }
+            set
+            {
+                Vector2 position = CurrentPosition;
+                position.X = value;
+                CurrentPosition = position;
+                NotifyPropertyChanged();
+            }
+        }
 
-        public Vector2 Direction;
+        public float Y
+        {
+            get { return CurrentPosition.Y; }
+            set
+            {
+                Vector2 position = CurrentPosition;
+                position.Y = value;
+                CurrentPosition = position;
+                NotifyPropertyChanged();
+            }
+        }
 
-        private Vector2 currentPosition;
-        public Vector2 CurrentPosition { get => currentPosition; set => currentPosition = value; }
+        public Vector2 Velocity;
 
-        private Vector2? nextPosition;
-        public Vector2? NextPosition { get => nextPosition; set => nextPosition = value; }
+        public Vector2 CurrentPosition { get; set; }
 
-        private int ballRadius;
-        public int BallRadius { get => ballRadius; set => ballRadius = value; }
+        public float BallDiameter { get; set; }
+        public float BallRadius { get; set; }
 
-        private float speed;
-        public float Speed { get => speed; set => speed = value; }
+        public float Speed { get; set; }
+        public float Mass { get; set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

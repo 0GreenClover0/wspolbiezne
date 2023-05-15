@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
+﻿using System.Collections.ObjectModel;
 using Wspolbiezne.Data;
 
 namespace Wspolbiezne.Presentation.Model
 {
     public class Playground
     {
-        public int lastUpdatedBallCount = 0;
-        public int ballRadius = 50;
-        public List<Ball> balls = new List<Ball>();
-        public List<Ellipse> ellipses = new List<Ellipse>();
+        public static ObservableCollection<Ball> ModelBalls
+        {
+            get { return modelBalls; }
+        }
+
+        public static ObservableCollection<Ball> modelBalls = new ObservableCollection<Ball>();
+
+        public static int lastUpdatedBallCount = 0;
+        public static int ballDiameter = 50;
     }
 }

@@ -8,9 +8,33 @@
         mc:Ignorable="d"
         Title="Wspolbiezne" Height="1080" Width="1920">
     <Grid Width="1920"  Height="1080">
-
-        <Canvas Name="BallPlayground" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200"  Height="795" Background="Aquamarine">
-            
+        <Grid.DataContext>
+            <model:Playground/>
+        </Grid.DataContext>
+        <Canvas VerticalAlignment="Top" HorizontalAlignment="Left" Width="1200"  Height="795">
+            <ItemsControl ItemsSource="{Binding ModelBalls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Loaded="BallPlayground_Loaded" Name="BallPlayground" Width="1200" Height="795" Background="Aquamarine"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Height="{Binding BallDiameter}"
+                                 Width="{Binding BallDiameter}"
+                                 Fill="{Binding Brush}"
+                                 StrokeThickness="3"
+                                 Stroke="Black"
+                        />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Canvas>
         <Canvas HorizontalAlignment="Right" Width="720" Height="1080" Background="IndianRed">
             <TextBlock Name="AAA"/>
