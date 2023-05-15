@@ -34,11 +34,15 @@ namespace Wspolbiezne
         private void AddSphereButton_Click(object sender, RoutedEventArgs e)
         {
             ballManager.CreateBall(BallPlayground);
+
+            UpdateBallCount();
         }
 
         private void RemoveSphereButton_Click(object sender, RoutedEventArgs e)
         {
             ballManager.RemoveBall();
+
+            UpdateBallCount();
         }
 
         private void OnBallCountChanged(object sender, TextChangedEventArgs args)
@@ -48,11 +52,7 @@ namespace Wspolbiezne
 
             ballManager.SetBalls(BallPlayground, int.Parse(BallCount.Text));
 
-            if (Playground.lastUpdatedBallCount != Playground.ModelBalls.Count)
-            {
-                BallCount.Text = Playground.ModelBalls.Count.ToString();
-                Playground.lastUpdatedBallCount = Playground.ModelBalls.Count;
-            }
+            UpdateBallCount();
         }
 
         private void OnBallCountKeydown(object sender, KeyEventArgs e)
@@ -64,6 +64,15 @@ namespace Wspolbiezne
         {
             e.Handled = !numbersOnly.IsMatch(e.Text);
             base.OnPreviewTextInput(e);
+        }
+
+        private void UpdateBallCount()
+        {
+            if (Playground.lastUpdatedBallCount != Playground.ModelBalls.Count)
+            {
+                BallCount.Text = Playground.ModelBalls.Count.ToString();
+                Playground.lastUpdatedBallCount = Playground.ModelBalls.Count;
+            }
         }
     }
 }
