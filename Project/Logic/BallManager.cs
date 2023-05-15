@@ -26,6 +26,7 @@ namespace Wspolbiezne.Logic
                     (byte)random.Next(1, 255)
                 )
             );
+            brush.Freeze();
 
             Ellipse ellipse = new Ellipse
             {
@@ -47,6 +48,17 @@ namespace Wspolbiezne.Logic
             ball.CurrentPosition = new Vector2(x, y);
             ball.Speed = 20f;
 
+            // Random direction in X axis in range -1, 1. Y axis will be complementary to 1 (max speed)
+            float directionX = (float)(random.NextDouble() + (-1) * random.Next(0, 2));
+
+            float directionY;
+            if (random.Next(0, 2) == 0)
+                directionY = (float)Math.Sqrt(1 - directionX * directionX);
+            else
+                directionY = (float)Math.Sqrt(1 - directionX * directionX) * -1f;
+
+            ball.Direction = new Vector2(directionX, directionY);
+
             playground.balls.Add(ball);
             playground.ellipses.Add(ellipse);
             canvas.Children.Add(ellipse);
@@ -66,16 +78,16 @@ namespace Wspolbiezne.Logic
         public void MoveBall(int width, int height, Ball ball, float deltaTime)
         {
             int ballRadius = ball.BallRadius;
-            if (ball.NextPosition == null || Vector2.Distance(ball.CurrentPosition, ball.NextPosition.Value) < 5f)
-            {
-                ball.NextPosition = new Vector2(
-                    random.Next(0, width - ballRadius),
-                    random.Next(0, height - ballRadius)
-                );
-            }
+
+            ball.NextPosition = ball.CurrentPosition + ball.Direction;
 
             Vector2 nextPosition = MoveTowards(ball.CurrentPosition, ball.NextPosition.Value, ball.Speed * deltaTime);
-            //Vector2 nextPosition = Vector2.Lerp(ball.CurrentPosition, ball.NextPosition.Value, ball.Speed);
+
+            if (nextPosition.X >= width - ballRadius || nextPosition.X < 0f)
+                ball.Direction.X =  -ball.Direction.X;
+
+            if (nextPosition.Y >= height - ballRadius || nextPosition.Y < 0f)
+                ball.Direction.Y = -ball.Direction.Y;
 
             ball.CurrentPosition = nextPosition;
         }

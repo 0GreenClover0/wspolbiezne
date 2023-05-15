@@ -16,6 +16,8 @@ namespace Wspolbiezne.Data
         public int x { get; set; }
         public int y { get; set; }
 
+        public Vector2 Direction;
+
         private Vector2 currentPosition;
         public Vector2 CurrentPosition { get => currentPosition; set => currentPosition = value; }
 
