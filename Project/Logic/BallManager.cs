@@ -102,25 +102,26 @@ namespace Wspolbiezne.Logic
             int ballCount = Playground.ModelBalls.Count;
             for (int i = 0; i < ballCount; i++)
             {
-                float distanceSquared = MathF.Pow(x - Playground.ModelBalls[i].X, 2f) + MathF.Pow(y - Playground.ModelBalls[i].Y, 2f);
+                lock (Playground.ModelBalls[i])
+                {
+                    float distanceSquared = MathF.Pow(x - Playground.ModelBalls[i].X, 2f) + MathF.Pow(y - Playground.ModelBalls[i].Y, 2f);
 
-                if (distanceSquared >= MathF.Pow(ball.BallRadius + Playground.ModelBalls[i].BallRadius, 2f))
-                    continue;
+                    if (distanceSquared >= MathF.Pow(ball.BallRadius + Playground.ModelBalls[i].BallRadius, 2f))
+                        continue;
 
-                if (Playground.ModelBalls[i] == ball)
-                    continue;
-
-                float distance = MathF.Sqrt(distanceSquared);
-
-                if (distance == 0f)
-                    continue;
-
-                Vector2 normal = (Playground.ModelBalls[i].CurrentPosition - ball.CurrentPosition) / distance;
+                    if (Playground.ModelBalls[i] == ball)
+                        continue;
                 
-                float p = (2f / (ball.Mass + Playground.ModelBalls[i].Mass)) * (ball.Velocity * normal - Playground.ModelBalls[i].Velocity * normal).Length();
+                    float distance = MathF.Sqrt(distanceSquared);
 
-                ball.Velocity -= p * ball.Mass * normal;
-                Playground.ModelBalls[i].Velocity += p * Playground.ModelBalls[i].Mass * normal;
+                    if (distance == 0f)
+                        continue;
+
+                    Vector2 normal = (Playground.ModelBalls[i].CurrentPosition - ball.CurrentPosition) / distance;
+                    float p = (2f / (ball.Mass + Playground.ModelBalls[i].Mass)) * (ball.Velocity * normal - Playground.ModelBalls[i].Velocity * normal).Length();
+                    ball.Velocity -= p * ball.Mass * normal;
+                    Playground.ModelBalls[i].Velocity += p * Playground.ModelBalls[i].Mass * normal;
+                }
             }
 
             nextPosition = CalculateNextPosition(ball, deltaTime);
