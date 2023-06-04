@@ -7,16 +7,33 @@ using Wspolbiezne.Data;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
+using System.Text;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading;
+using System.Xml;
 
 namespace Wspolbiezne.Logic
 {
     public class BallManager
     {
-        public double CanvasWidth { get; set; }
-        public double CanvasHeight { get; set; }
+        private double canvasWidth = 1920f;
+        public double CanvasWidth { get { return canvasWidth; } set { canvasWidth = value; } }
+
+        private double canvasHeight = 1080f;
+        public double CanvasHeight { get { return canvasHeight; } set { canvasHeight = value; } }
+
+        private float deltaTime = 0.16f;
 
         private readonly Random random = new Random();
         private Stopwatch timer = new Stopwatch();
+
+        private const string fileName = @".\logs.json";
+
+        private static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
+
+        private JsonSerializerOptions serializerOptions = new JsonSerializerOptions() { WriteIndented = true };
 
         public BallManager()
         {
@@ -75,6 +92,8 @@ namespace Wspolbiezne.Logic
             ball.Velocity = new Vector2(directionX, directionY);
 
             Playground.ModelBalls.Add(ball);
+
+            ball.Run = () => MoveBall(ball);
         }
 
         public void RemoveBall()
@@ -85,8 +104,10 @@ namespace Wspolbiezne.Logic
             Playground.ModelBalls.RemoveAt(random.Next(0, Playground.ModelBalls.Count));
         }
 
-        public void MoveBall(double width, double height, Ball ball, float deltaTime)
+        public void MoveBall(Ball ball)
         {
+            double width = CanvasWidth;
+            double height = CanvasHeight;
             Vector2 nextPosition = CalculateNextPosition(ball, deltaTime);
 
             if ((nextPosition.X >= width - ball.BallDiameter && ball.Velocity.X > 0f) || (nextPosition.X < 0f && ball.Velocity.X < 0f))
@@ -100,6 +121,7 @@ namespace Wspolbiezne.Logic
             float y = nextPosition.Y;
 
             int ballCount = Playground.ModelBalls.Count;
+            List<CollisionData> collisions = new List<CollisionData>();
             for (int i = 0; i < ballCount; i++)
             {
                 lock (Playground.ModelBalls[i])
@@ -117,6 +139,20 @@ namespace Wspolbiezne.Logic
                     if (distance == 0f)
                         continue;
 
+                    CollisionData collisionData = new CollisionData(
+                        DateTime.Now.ToLongTimeString(),
+                        ball.CurrentPosition.X + "; " + ball.CurrentPosition.Y,
+                        ball.Velocity.X + "; " + ball.Velocity.Y,
+                        ball.Mass,
+                        ball.BallRadius,
+                        Playground.ModelBalls[i].CurrentPosition.X + "; " + Playground.ModelBalls[i].CurrentPosition.Y,
+                        Playground.ModelBalls[i].Velocity.X + "; " + Playground.ModelBalls[i].Velocity.Y,
+                        Playground.ModelBalls[i].Mass,
+                        Playground.ModelBalls[i].BallRadius
+                    );
+
+                    collisions.Add(collisionData);
+
                     Vector2 normal = (Playground.ModelBalls[i].CurrentPosition - ball.CurrentPosition) / distance;
                     float p = (2f / (ball.Mass + Playground.ModelBalls[i].Mass)) * (ball.Velocity * normal - Playground.ModelBalls[i].Velocity * normal).Length();
                     ball.Velocity -= p * ball.Mass * normal;
@@ -124,9 +160,32 @@ namespace Wspolbiezne.Logic
                 }
             }
 
+            _ = Task.Run(() => LogCollisionData(collisions));
+
             nextPosition = CalculateNextPosition(ball, deltaTime);
             ball.X = nextPosition.X;
             ball.Y = nextPosition.Y;
+        }
+
+        private async void LogCollisionData(List<CollisionData> collisions)
+        {
+            if (collisions.Count != 0)
+            {
+                readerWriterLock.EnterWriteLock();
+                try
+                {
+                    using (FileStream sourceStream = File.Open(fileName, FileMode.OpenOrCreate))
+                    {
+                        sourceStream.Seek(0, SeekOrigin.End);
+                        byte[] result = Encoding.Unicode.GetBytes(JsonSerializer.Serialize(collisions, serializerOptions));
+                        await sourceStream.WriteAsync(result);
+                    }
+                }
+                finally
+                {
+                    readerWriterLock.ExitWriteLock();
+                }
+            }
         }
 
         private Vector2 CalculateNextPosition(Ball ball, float deltaTime)
@@ -169,13 +228,13 @@ namespace Wspolbiezne.Logic
             return current + a / magnitude * maxDistanceDelta;
         }
 
-        public void Update(object sender, EventArgs e)
+        public async void Update(object sender, EventArgs e)
         {
-            float deltaTime = timer.ElapsedMilliseconds * 0.01f;
+            deltaTime = timer.ElapsedMilliseconds * 0.01f;
 
-            Task.WhenAll(
+            await Task.WhenAll(
                 from ball in Playground.ModelBalls
-                select Task.Run(() => MoveBall(CanvasWidth, CanvasHeight, ball, deltaTime))
+                select Task.Run(ball.Run)
             );
 
             timer.Restart();

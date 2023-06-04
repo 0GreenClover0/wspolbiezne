@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
@@ -42,6 +43,8 @@ namespace Wspolbiezne.Data
 
         public float Speed { get; set; }
         public float Mass { get; set; }
+
+        public Action Run { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

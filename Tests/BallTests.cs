@@ -42,7 +42,7 @@ namespace Tests
             var currentPos = ball.CurrentPosition;
             Assert.IsNotNull(currentPos);
 
-            ballManager.MoveBall(1920, 180, ball, 0.1f);
+            ballManager.MoveBall(ball);
 
             Assert.AreNotEqual(ball.CurrentPosition, currentPos);
         }
