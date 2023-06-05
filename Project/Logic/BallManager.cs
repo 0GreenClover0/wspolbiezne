@@ -28,12 +28,7 @@ namespace Wspolbiezne.Logic
 
         private readonly Random random = new Random();
         private Stopwatch timer = new Stopwatch();
-
-        private const string fileName = @".\logs.json";
-
-        private static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
-
-        private JsonSerializerOptions serializerOptions = new JsonSerializerOptions() { WriteIndented = true };
+        private Logger logger = new Logger();
 
         public BallManager()
         {
@@ -140,7 +135,7 @@ namespace Wspolbiezne.Logic
                         continue;
 
                     CollisionData collisionData = new CollisionData(
-                        DateTime.Now.ToLongTimeString(),
+                        DateTime.Now.ToString("HH:mm:ss::fff"),
                         ball.CurrentPosition.X + "; " + ball.CurrentPosition.Y,
                         ball.Velocity.X + "; " + ball.Velocity.Y,
                         ball.Mass,
@@ -160,32 +155,11 @@ namespace Wspolbiezne.Logic
                 }
             }
 
-            _ = Task.Run(() => LogCollisionData(collisions));
+            _ = Task.Run(() => logger.LogCollisionData(collisions));
 
             nextPosition = CalculateNextPosition(ball, deltaTime);
             ball.X = nextPosition.X;
             ball.Y = nextPosition.Y;
-        }
-
-        private async void LogCollisionData(List<CollisionData> collisions)
-        {
-            if (collisions.Count != 0)
-            {
-                readerWriterLock.EnterWriteLock();
-                try
-                {
-                    using (FileStream sourceStream = File.Open(fileName, FileMode.OpenOrCreate))
-                    {
-                        sourceStream.Seek(0, SeekOrigin.End);
-                        byte[] result = Encoding.Unicode.GetBytes(JsonSerializer.Serialize(collisions, serializerOptions));
-                        await sourceStream.WriteAsync(result);
-                    }
-                }
-                finally
-                {
-                    readerWriterLock.ExitWriteLock();
-                }
-            }
         }
 
         private Vector2 CalculateNextPosition(Ball ball, float deltaTime)
