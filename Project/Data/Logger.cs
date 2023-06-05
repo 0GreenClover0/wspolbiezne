@@ -43,5 +43,23 @@ namespace Wspolbiezne.Data
                 }
             }
         }
+
+        public async void LogBallPosition(BallData ballData)
+        {
+            readerWriterLock.EnterWriteLock();
+            try
+            {
+                using (FileStream sourceStream = File.Open(fileName, FileMode.Open))
+                {
+                    sourceStream.Seek(0, SeekOrigin.End);
+                    byte[] result = Encoding.Unicode.GetBytes(JsonSerializer.Serialize(ballData, serializerOptions));
+                    await sourceStream.WriteAsync(result);
+                }
+            }
+            finally
+            {
+                readerWriterLock.ExitWriteLock();
+            }
+        }
     }
 }

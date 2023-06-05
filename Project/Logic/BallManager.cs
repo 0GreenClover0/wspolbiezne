@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Xml;
+using System.Timers;
 
 namespace Wspolbiezne.Logic
 {
@@ -89,6 +90,18 @@ namespace Wspolbiezne.Logic
             Playground.ModelBalls.Add(ball);
 
             ball.Run = () => MoveBall(ball);
+            var timer = new System.Timers.Timer(1000);
+            timer.Elapsed += OnTimedEvent;
+            timer.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            foreach (var ball in Playground.ModelBalls)
+            {
+                BallData ballData = new BallData(ball.X, ball.Y);
+                _ = Task.Run(() => logger.LogBallPosition(ballData));
+            }
         }
 
         public void RemoveBall()
