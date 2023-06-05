@@ -13,6 +13,7 @@ namespace Wspolbiezne.Data
     public class Logger
     {
         private const string fileName = @".\logs.json";
+        private const string positionFileName = @".\logPosition.json";
 
         private static ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
 
@@ -21,6 +22,7 @@ namespace Wspolbiezne.Data
         public Logger()
         {
             File.Create(fileName);
+            File.Create(positionFileName);
         }
 
         public async void LogCollisionData(List<CollisionData> collisions)
@@ -46,19 +48,11 @@ namespace Wspolbiezne.Data
 
         public async void LogBallPosition(BallData ballData)
         {
-            readerWriterLock.EnterWriteLock();
-            try
+            using (FileStream sourceStream = File.Open(positionFileName, FileMode.Open))
             {
-                using (FileStream sourceStream = File.Open(fileName, FileMode.Open))
-                {
-                    sourceStream.Seek(0, SeekOrigin.End);
-                    byte[] result = Encoding.Unicode.GetBytes(JsonSerializer.Serialize(ballData, serializerOptions));
-                    await sourceStream.WriteAsync(result);
-                }
-            }
-            finally
-            {
-                readerWriterLock.ExitWriteLock();
+                sourceStream.Seek(0, SeekOrigin.End);
+                byte[] result = Encoding.Unicode.GetBytes(JsonSerializer.Serialize(ballData, serializerOptions));
+                await sourceStream.WriteAsync(result);
             }
         }
     }

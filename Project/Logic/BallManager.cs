@@ -28,12 +28,16 @@ namespace Wspolbiezne.Logic
         private float deltaTime = 0.16f;
 
         private readonly Random random = new Random();
-        private Stopwatch timer = new Stopwatch();
+        private Stopwatch drawingTimer = new Stopwatch();
         private Logger logger = new Logger();
 
         public BallManager()
         {
-            timer.Start();
+            drawingTimer.Start();
+
+            var loggingTimer = new System.Timers.Timer(1000);
+            loggingTimer .Elapsed += OnTimedEvent;
+            loggingTimer .Enabled = true;
         }
 
         public void CreateBall(Canvas canvas)
@@ -90,9 +94,6 @@ namespace Wspolbiezne.Logic
             Playground.ModelBalls.Add(ball);
 
             ball.Run = () => MoveBall(ball);
-            var timer = new System.Timers.Timer(1000);
-            timer.Elapsed += OnTimedEvent;
-            timer.Enabled = true;
         }
 
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
@@ -100,7 +101,7 @@ namespace Wspolbiezne.Logic
             foreach (var ball in Playground.ModelBalls)
             {
                 BallData ballData = new BallData(ball.X, ball.Y);
-                _ = Task.Run(() => logger.LogBallPosition(ballData));
+                logger.LogBallPosition(ballData);
             }
         }
 
@@ -217,14 +218,14 @@ namespace Wspolbiezne.Logic
 
         public async void Update(object sender, EventArgs e)
         {
-            deltaTime = timer.ElapsedMilliseconds * 0.01f;
+            deltaTime = drawingTimer.ElapsedMilliseconds * 0.01f;
 
             await Task.WhenAll(
                 from ball in Playground.ModelBalls
                 select Task.Run(ball.Run)
             );
 
-            timer.Restart();
+            drawingTimer.Restart();
         }
     }
 }
